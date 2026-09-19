@@ -89,6 +89,14 @@
             <version>2.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- Forzar actualización de WebDriverManager para dar soporte a Chrome 115+ -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>5.9.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
