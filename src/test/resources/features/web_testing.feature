@@ -14,7 +14,11 @@ Característica: Pruebas automatizadas de interfaz web en url Selenium.dev
     Entonces la URL de la página debería cambiar a la sección de documentación
 
   @web3 @regresion @certi
-  Escenario: Caso de Prueba 3 - Validar flujo de busqueda en el sitio
-    Cuando realiza la busqueda de la palabra "web"
-    Entonces los resultados mostrados deben corresponder a la búsqueda de "WebDriver"
+  Esquema del escenario: Caso de Prueba 3 - Validar flujo de busqueda en el sitio
+    Cuando realiza la busqueda de la palabra "<palabra>"
+    Entonces los resultados mostrados deben corresponder a la búsqueda de "<valorPagina>"
+    Ejemplos:
+      | palabra | valorPagina |
+      | web     | WebDriver   |
+      | grid    | Grid        |
 
