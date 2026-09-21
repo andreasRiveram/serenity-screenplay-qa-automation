@@ -4,11 +4,22 @@ on:
   workflow_dispatch:
     inputs:
       cucumber_tag:
-        description: 'Tag(s) a ejecutar (ej: @regresion or @regresionapi)'
+        description: 'Tag a ejecutar (Selecciona "TODOS" para ejecutar toda la suite)'
         required: true
-        default: '@regresion or @regresionapi'
+        type: choice
+        default: 'TODOS'
+        options:
+          - 'TODOS'
+          - '@regresion'
+          - '@regresionapi'
+          - '@web1'
+          - '@web2'
+          - '@web3'
+          - '@api1'
+          - '@api2'
+          - '@api3'
       environment:
-        description: 'Ambiente de pruebas por ahora DEV'
+        description: 'Ambiente de pruebas'
         required: false
         default: 'dev'
 
@@ -27,26 +38,43 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: 3. Ejecutar Pruebas Automatizadas (Web + API)
+      - name: 3. Instalar Google Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: 4. Procesar Tag de Cucumber
+        id: process_tags
+        run: |
+          SELECTED_TAG="${{ github.event.inputs.cucumber_tag }}"
+          
+          if [ "$SELECTED_TAG" == "TODOS" ] || [ -z "$SELECTED_TAG" ]; then
+            echo "Ejecutando TODOS los features sin filtro de tags."
+            echo "maven_tags_param=" >> $GITHUB_OUTPUT
+          else
+            echo "Ejecutando con el tag: $SELECTED_TAG"
+            echo "maven_tags_param=-Dtags=\"$SELECTED_TAG\"" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 5. Ejecutar Pruebas Automatizadas (Web + API)
         id: run_tests
         run: |
           mvn clean verify \
-            -Dtags="${{ github.event.inputs.cucumber_tag }}" \
-            -Denvironment="${{ github.event.inputs.environment }}"
+            ${{ steps.process_tags.outputs.maven_tags_param }} \
+            -Denvironment="${{ github.event.inputs.environment }}" \
+            -Dheadless.mode=true
 
-      - name: 4. Generar y Publicar Reporte HTML de Serenity
-        if: always() # Se ejecuta aunque existan fallos en las pruebas
+      - name: 6. Generar y Publicar Reporte HTML de Serenity
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: serenity-report-${{ github.run_id }}
           path: target/site/serenity/
           retention-days: 14
 
-      - name: 5. Resumen del Estado de la Ejecución
+      - name: 7. Resumen del Estado de la Ejecución
         if: always()
         run: |
           if [ "${{ steps.run_tests.outcome }}" == "success" ]; then
-            echo "✅ TODAS LAS PRUEBAS (WEB Y API) PASARON CON ÉXITO."
+            echo "✅ TODAS LAS PRUEBAS PASARON CON ÉXITO."
           else
             echo "❌ EXISTEN FALLOS EN LAS PRUEBAS. Revisa el reporte en los Artifacts."
           fi
