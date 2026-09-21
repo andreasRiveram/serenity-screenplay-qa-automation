@@ -11,7 +11,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Actualizar de 3.6.12 a 3.9.8 -->
         <serenity.version>3.9.8</serenity.version>
         <serenity.maven.version>3.9.8</serenity.maven.version>
         <serenity.cucumber.version>3.9.8</serenity.cucumber.version>

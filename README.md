@@ -47,4 +47,4 @@ Si hay un bloqueo con Chrome por actualización del navegador, elimina los binar
 
 #### PowerShell:
     Remove-Item -Recurse -Force ~/.cache/selenium o
-    Remove-Item -Recurse -Force $HOME/.cache/selenium
+    Remove-Item -Recurse -Force $HOME/.cache/selenium 

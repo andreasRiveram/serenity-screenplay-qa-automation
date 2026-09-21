@@ -1,0 +1,52 @@
+name: Ejecución de Pruebas Automatizadas (Web & API)
+
+on:
+  workflow_dispatch:
+    inputs:
+      cucumber_tag:
+        description: 'Tag(s) a ejecutar (ej: @regresion or @regresionapi)'
+        required: true
+        default: '@regresion or @regresionapi'
+      environment:
+        description: 'Ambiente de pruebas por ahora DEV'
+        required: false
+        default: 'dev'
+
+jobs:
+  test-execution:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Descargar el código fuente
+        uses: actions/checkout@v4
+
+      - name: 2. Configurar JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: 3. Ejecutar Pruebas Automatizadas (Web + API)
+        id: run_tests
+        run: |
+          mvn clean verify \
+            -Dtags="${{ github.event.inputs.cucumber_tag }}" \
+            -Denvironment="${{ github.event.inputs.environment }}"
+
+      - name: 4. Generar y Publicar Reporte HTML de Serenity
+        if: always() # Se ejecuta aunque existan fallos en las pruebas
+        uses: actions/upload-artifact@v4
+        with:
+          name: serenity-report-${{ github.run_id }}
+          path: target/site/serenity/
+          retention-days: 14
+
+      - name: 5. Resumen del Estado de la Ejecución
+        if: always()
+        run: |
+          if [ "${{ steps.run_tests.outcome }}" == "success" ]; then
+            echo "✅ TODAS LAS PRUEBAS (WEB Y API) PASARON CON ÉXITO."
+          else
+            echo "❌ EXISTEN FALLOS EN LAS PRUEBAS. Revisa el reporte en los Artifacts."
+          fi
