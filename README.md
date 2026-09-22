@@ -48,3 +48,28 @@ Si hay un bloqueo con Chrome por actualización del navegador, elimina los binar
 #### PowerShell:
     Remove-Item -Recurse -Force ~/.cache/selenium o
     Remove-Item -Recurse -Force $HOME/.cache/selenium 
+
+---
+
+
+## ⚙️ Integración Continua (CI/CD)
+
+Adicional se agrega un pipeline automatizado en **GitHub Actions** para la ejecución de pruebas regresivas (Web & API) en entornos sin interfaz gráfica (*headless*).
+
+* 🚀 **Historial de Ejecuciones:** [Ver ejecuciones en GitHub Actions](https://github.com/andreasRiveram/serenity-screenplay-qa-automation/actions)
+
+> 🔐 **Nota sobre el acceso:** Aunque el repositorio es público, **debes haber iniciado sesión en GitHub** para poder disparar manualmente los ejecuciones (`Run workflow`) y descargar los reportes de prueba.
+
+---
+
+### 📌 ¿Cómo ejecutar las pruebas desde GitHub Actions?
+
+1. Inicia sesión en tu cuenta de **GitHub**.
+2. Ve a la pestaña **[Actions](https://github.com/andreasRiveram/serenity-screenplay-qa-automation/actions)** en el menú superior del repositorio.
+3. En el panel izquierdo, selecciona el workflow **`Ejecución de Pruebas Automatizadas (Web & API)`**.
+4. Haz clic en el menú desplegable **`Run workflow`** (ubicado a la derecha).
+5. Selecciona los parámetros deseados:
+    * **`cucumber_tag`**: Selecciona `TODOS` para ejecutar toda la suite de pruebas o escoge un tag específico (`@regresion`, `@regresionapi`, `@certi`, etc.).
+    * **`environment`**: Especifica el entorno de ejecución (`dev`, `qa`, etc.).
+6. Presiona el botón verde **`Run workflow`** para iniciar la ejecución.
+7. Una vez completado el Job, desplázate hasta la sección **Artifacts** en la parte inferior del resumen para descargar el reporte visual interactivo de Serenity (`serenity-report`).
